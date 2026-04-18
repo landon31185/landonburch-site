@@ -1,0 +1,132 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const posts = (await getCollection('blog'))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+function formatDate(d) {
+  return d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+}
+---
+<BaseLayout title="Writing — Landon Burch" description="Essays on UX, systems thinking, and product design.">
+
+  <section class="page-header">
+    <div class="container">
+      <p class="page-label">Writing</p>
+      <h1 class="page-title">All posts</h1>
+    </div>
+  </section>
+
+  <section class="post-list">
+    <div class="container">
+      {posts.map(post => (
+        <a href={`/blog/${post.id}`} class="post-row">
+          <div class="post-row-date">
+            <span>{formatDate(post.data.date)}</span>
+          </div>
+          <div class="post-row-body">
+            <h2 class="post-row-title">{post.data.title}</h2>
+            <p class="post-row-desc">{post.data.description}</p>
+            <div class="post-row-tags">
+              {post.data.tags.map(tag => (
+                <span class="tag">{tag}</span>
+              ))}
+            </div>
+          </div>
+          <div class="post-row-arrow">&rarr;</div>
+        </a>
+      ))}
+    </div>
+  </section>
+
+</BaseLayout>
+
+<style>
+  .page-header {
+    padding: var(--space-16) 0 var(--space-8);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .page-label {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+    margin-bottom: var(--space-3);
+  }
+
+  .page-title {
+    font-family: var(--font-heading);
+    font-size: clamp(1.75rem, 4vw, 2.75rem);
+    font-weight: 400;
+  }
+
+  .post-list {
+    padding: var(--space-4) 0 var(--space-24);
+  }
+
+  .post-row {
+    display: grid;
+    grid-template-columns: 160px 1fr auto;
+    align-items: start;
+    gap: var(--space-8);
+    padding: var(--space-8) 0;
+    border-bottom: 1px solid var(--color-border);
+    text-decoration: none;
+    color: inherit;
+    transition: background 0.15s;
+  }
+
+  .post-row:hover { background: var(--color-surface); }
+  .post-row:hover .post-row-arrow { opacity: 1; transform: translateX(3px); }
+
+  .post-row-date {
+    padding-top: 0.2em;
+  }
+
+  .post-row-date span {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.05em;
+    color: var(--color-text-muted);
+  }
+
+  .post-row-title {
+    font-family: var(--font-heading);
+    font-size: var(--text-xl);
+    font-weight: 400;
+    line-height: 1.25;
+    margin-bottom: var(--space-3);
+  }
+
+  .post-row-desc {
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    line-height: 1.6;
+    margin-bottom: var(--space-3);
+  }
+
+  .post-row-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .post-row-arrow {
+    font-size: var(--text-lg);
+    color: var(--color-text-muted);
+    opacity: 0;
+    transition: opacity 0.15s, transform 0.15s;
+    align-self: center;
+  }
+
+  @media (max-width: 640px) {
+    .post-row {
+      grid-template-columns: 1fr;
+      gap: var(--space-3);
+    }
+    .post-row-arrow { display: none; }
+  }
+</style>

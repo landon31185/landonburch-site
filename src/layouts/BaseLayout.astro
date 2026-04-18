@@ -1,0 +1,127 @@
+---
+import '../styles/global.css';
+
+const { title = 'Landon Burch', description = 'UX Designer & Systems Thinker' } = Astro.props;
+const pathname = Astro.url.pathname;
+
+function isActive(href) {
+  if (href === '/') return pathname === '/';
+  return pathname.startsWith(href);
+}
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="generator" content={Astro.generator} />
+  <meta name="description" content={description} />
+  <title>{title}</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+</head>
+<body>
+
+  <header>
+    <nav class="container nav-inner">
+      <a href="/" class="wordmark">Landon</a>
+      <ul class="nav-links">
+        <li><a href="/blog"  class:list={['nav-link', { active: isActive('/blog') }]}>Writing</a></li>
+        <li><a href="/lab"   class:list={['nav-link', { active: isActive('/lab') }]}>Lab</a></li>
+        <li><a href="#"      class="nav-link">Work</a></li>
+        <li><a href="#"      class="nav-link">About</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <slot />
+  </main>
+
+  <footer>
+    <div class="container footer-inner">
+      <span>Landon Burch</span>
+      <span>UX Designer · Systems Thinker</span>
+    </div>
+  </footer>
+
+</body>
+</html>
+
+<style>
+  header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    height: var(--nav-height);
+    background: var(--color-bg);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .nav-inner {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .wordmark {
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    letter-spacing: 0.08em;
+    text-decoration: none;
+    color: var(--color-text);
+    font-weight: 400;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: var(--space-6);
+  }
+
+  .nav-link {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--color-text-muted);
+    transition: color 0.15s;
+  }
+
+  .nav-link:hover,
+  .nav-link.active {
+    color: var(--color-text);
+  }
+
+  main {
+    padding-top: var(--nav-height);
+    min-height: calc(100vh - var(--nav-height));
+  }
+
+  footer {
+    background: var(--color-ink-bg);
+    border-top: 1px solid var(--color-ink-border);
+  }
+
+  .footer-inner {
+    padding: var(--space-6) var(--space-8);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-4);
+  }
+
+  footer span {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-ink-muted);
+    letter-spacing: 0.08em;
+  }
+
+  @media (max-width: 640px) {
+    .nav-links { gap: var(--space-4); }
+    .footer-inner { flex-direction: column; align-items: flex-start; }
+  }
+</style>

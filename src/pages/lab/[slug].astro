@@ -1,0 +1,221 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const experiments = await getCollection('experiments');
+  return experiments.map(exp => ({
+    params: { slug: exp.id },
+    props:  { exp },
+  }));
+}
+
+const { exp } = Astro.props;
+const { Content } = await render(exp);
+
+// Related post lookup
+let relatedPost = null;
+if (exp.data.relatedPost) {
+  const all = await getCollection('blog');
+  relatedPost = all.find(p => p.id === exp.data.relatedPost) ?? null;
+}
+
+function formatDate(d) {
+  return d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+}
+---
+<BaseLayout title={`${exp.data.title} — Lab — Landon Burch`} description={exp.data.description}>
+
+  <article class="exp-article">
+
+    <header class="exp-header">
+      <div class="container--narrow">
+        <div class="exp-meta">
+          <a href="/lab" class="back-link">&larr; Lab</a>
+          <time datetime={exp.data.date.toISOString()}>{formatDate(exp.data.date)}</time>
+        </div>
+        <h1 class="exp-heading">{exp.data.title}</h1>
+        <p class="exp-description">{exp.data.description}</p>
+        <div class="exp-tags">
+          {exp.data.tags.map(tag => (
+            <span class="tag">{tag}</span>
+          ))}
+        </div>
+      </div>
+    </header>
+
+    {exp.data.embedUrl && exp.data.embedType === 'iframe' && (
+      <div class="embed-wrapper container">
+        <iframe
+          src={exp.data.embedUrl}
+          class="embed-frame"
+          loading="lazy"
+          title={exp.data.title}
+        />
+      </div>
+    )}
+
+    {exp.data.embedType === 'canvas' && (
+      <div class="embed-wrapper container">
+        <div class="embed-placeholder">
+          <span class="embed-placeholder-label">Canvas embed — drop component here</span>
+        </div>
+      </div>
+    )}
+
+    <div class="exp-body container--narrow">
+      <div class="prose">
+        <Content />
+      </div>
+    </div>
+
+    {relatedPost && (
+      <aside class="related-post container--narrow">
+        <h2 class="related-label">Related writing</h2>
+        <a href={`/blog/${relatedPost.id}`} class="related-card">
+          <span class="related-date">{formatDate(relatedPost.data.date)}</span>
+          <h3 class="related-title">{relatedPost.data.title}</h3>
+          <p class="related-desc">{relatedPost.data.description}</p>
+        </a>
+      </aside>
+    )}
+
+  </article>
+
+</BaseLayout>
+
+<style>
+  .exp-article {
+    padding-bottom: var(--space-24);
+  }
+
+  .exp-header {
+    padding: var(--space-12) 0 var(--space-8);
+    border-bottom: 1px solid var(--color-border);
+    margin-bottom: var(--space-12);
+  }
+
+  .exp-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-6);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+    letter-spacing: 0.05em;
+  }
+
+  .back-link {
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+  .back-link:hover { color: var(--color-text); }
+
+  .exp-heading {
+    font-family: var(--font-heading);
+    font-size: clamp(1.75rem, 4vw, 3rem);
+    font-weight: 400;
+    line-height: 1.15;
+    margin-bottom: var(--space-4);
+  }
+
+  .exp-description {
+    font-size: var(--text-lg);
+    color: var(--color-text-muted);
+    line-height: 1.6;
+    margin-bottom: var(--space-6);
+  }
+
+  .exp-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  /* Embed */
+  .embed-wrapper {
+    margin-bottom: var(--space-12);
+  }
+
+  .embed-frame {
+    width: 100%;
+    height: 600px;
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    background: var(--color-surface);
+  }
+
+  .embed-placeholder {
+    width: 100%;
+    height: 400px;
+    border: 1px dashed var(--color-border);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-surface-alt);
+  }
+
+  .embed-placeholder-label {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.1em;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+  }
+
+  .exp-body {
+    margin-bottom: var(--space-12);
+  }
+
+  /* Related post */
+  .related-post {
+    padding-top: var(--space-8);
+    border-top: 1px solid var(--color-border);
+  }
+
+  .related-label {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    margin-bottom: var(--space-4);
+    font-weight: 400;
+  }
+
+  .related-card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    padding: var(--space-6);
+    background: var(--color-surface-alt);
+    border: 1px solid var(--color-border);
+    text-decoration: none;
+    color: inherit;
+    transition: background 0.15s;
+  }
+
+  .related-card:hover { background: var(--color-surface); }
+
+  .related-date {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+    letter-spacing: 0.05em;
+  }
+
+  .related-title {
+    font-family: var(--font-heading);
+    font-size: var(--text-xl);
+    font-weight: 400;
+    line-height: 1.25;
+  }
+
+  .related-desc {
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    line-height: 1.6;
+  }
+</style>

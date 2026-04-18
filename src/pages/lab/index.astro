@@ -1,0 +1,182 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const experiments = (await getCollection('experiments'))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+function formatDate(d) {
+  return d.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+}
+---
+<BaseLayout title="Lab — Landon Burch" description="Experiments, prototypes, and tools I've built.">
+
+  <section class="page-header">
+    <div class="container">
+      <p class="page-label">Lab</p>
+      <h1 class="page-title">Experiments</h1>
+      <p class="page-sub">Prototypes, tools, and things I build to think with.</p>
+    </div>
+  </section>
+
+  <section class="experiment-list">
+    <div class="container">
+      {experiments.length === 0 ? (
+        <p class="empty">Nothing here yet.</p>
+      ) : (
+        <div class="exp-grid">
+          {experiments.map(exp => (
+            <a href={`/lab/${exp.id}`} class="exp-card">
+              <div class="exp-card-body">
+                <div class="exp-meta">
+                  <span class="exp-date">{formatDate(exp.data.date)}</span>
+                  {exp.data.embedType && (
+                    <span class="exp-type">{exp.data.embedType}</span>
+                  )}
+                </div>
+                <h2 class="exp-title">{exp.data.title}</h2>
+                <p class="exp-desc">{exp.data.description}</p>
+                <div class="exp-tags">
+                  {exp.data.tags.map(tag => (
+                    <span class="tag">{tag}</span>
+                  ))}
+                </div>
+              </div>
+              <div class="exp-card-footer">
+                <span class="exp-cta">View &rarr;</span>
+              </div>
+            </a>
+          ))}
+        </div>
+      )}
+    </div>
+  </section>
+
+</BaseLayout>
+
+<style>
+  .page-header {
+    padding: var(--space-16) 0 var(--space-8);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .page-label {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+    margin-bottom: var(--space-3);
+  }
+
+  .page-title {
+    font-family: var(--font-heading);
+    font-size: clamp(1.75rem, 4vw, 2.75rem);
+    font-weight: 400;
+    margin-bottom: var(--space-3);
+  }
+
+  .page-sub {
+    font-size: var(--text-base);
+    color: var(--color-text-muted);
+  }
+
+  .experiment-list {
+    padding: var(--space-12) 0 var(--space-24);
+  }
+
+  .empty {
+    color: var(--color-text-muted);
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    padding: var(--space-16) 0;
+  }
+
+  .exp-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1px;
+    background: var(--color-border);
+    border: 1px solid var(--color-border);
+  }
+
+  .exp-card {
+    display: flex;
+    flex-direction: column;
+    background: var(--color-bg);
+    text-decoration: none;
+    color: inherit;
+    transition: background 0.15s;
+  }
+
+  .exp-card:hover { background: var(--color-surface); }
+
+  .exp-card-body {
+    flex: 1;
+    padding: var(--space-8) var(--space-6);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .exp-meta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  .exp-date {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.08em;
+    color: var(--color-text-muted);
+  }
+
+  .exp-type {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    background: var(--color-surface-alt);
+    padding: 0.1em 0.5em;
+    border-radius: 2px;
+  }
+
+  .exp-title {
+    font-family: var(--font-heading);
+    font-size: var(--text-xl);
+    font-weight: 400;
+    line-height: 1.25;
+  }
+
+  .exp-desc {
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    line-height: 1.6;
+    flex: 1;
+  }
+
+  .exp-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-top: auto;
+  }
+
+  .exp-card-footer {
+    padding: var(--space-4) var(--space-6);
+    border-top: 1px solid var(--color-border);
+  }
+
+  .exp-cta {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+    transition: opacity 0.15s;
+  }
+
+  .exp-card:hover .exp-cta { opacity: 0.7; }
+</style>
