@@ -50,6 +50,8 @@ function isActive(href) {
     z-index: 200;
     padding: 1.5rem 3rem;
     display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
     justify-content: space-between;
     align-items: center;
     pointer-events: none;
@@ -63,10 +65,13 @@ function isActive(href) {
     text-decoration: none;
     pointer-events: all;
     mix-blend-mode: multiply;
+    flex-shrink: 0;
   }
 
   .nav-links {
     display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
     gap: 2.5rem;
     list-style: none;
     pointer-events: all;

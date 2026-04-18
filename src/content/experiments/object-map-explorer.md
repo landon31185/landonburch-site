@@ -4,7 +4,7 @@ date: 2026-04-01
 description: "An interactive canvas for mapping object relationships. Paste a product description, get back a draft ORCA map with objects, nested elements, calls-to-action, and relationships visualized."
 tags: [OOUX, Canvas, "AI Tools", TypeScript]
 embedType: canvas
-relatedPost: "the-six-objects-appfolio"
+relatedPost: "the-objects-your-product-forgot"
 ---
 
 ## What this does
