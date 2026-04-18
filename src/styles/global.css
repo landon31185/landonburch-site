@@ -1,42 +1,45 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Mono:wght@300;400&display=swap');
+
 /* ─────────────────────────────────────
    Design Tokens — swap these to retheme
    ───────────────────────────────────── */
 :root {
   /* Colors */
-  --color-bg:          #f9f9f7;
-  --color-surface:     #ffffff;
-  --color-surface-alt: #f2f2ef;
-  --color-text:        #1a1a18;
-  --color-text-muted:  #6b6b67;
-  --color-accent:      #c4622d;
-  --color-border:      #e0e0da;
-  --color-ink-bg:      #1a1a18;
-  --color-ink-text:    #f9f9f7;
-  --color-ink-muted:   #8a8a85;
-  --color-ink-border:  #2e2e2b;
+  --color-bg:          #F5F0E8;
+  --color-surface:     #FAF7F2;
+  --color-surface-alt: #E8E0D0;
+  --color-text:        #1A1612;
+  --color-text-muted:  #B8A99A;
+  --color-accent:      #C4622D;
+  --color-accent-light:#D4845A;
+  --color-border:      #E8E0D0;
+  --color-ink-bg:      #1A1612;
+  --color-ink-text:    #F5F0E8;
+  --color-ink-muted:   #B8A99A;
+  --color-ink-border:  #2a2420;
 
   /* Typography */
-  --font-heading: Georgia, 'Times New Roman', serif;
-  --font-body:    system-ui, -apple-system, sans-serif;
-  --font-mono:    'Courier New', Courier, monospace;
+  --font-heading: 'Playfair Display', Georgia, serif;
+  --font-body:    'DM Mono', 'Courier New', monospace;
+  --font-mono:    'DM Mono', 'Courier New', monospace;
 
   /* Scale */
-  --text-xs:  0.75rem;
-  --text-sm:  0.875rem;
+  --text-xs:   0.75rem;
+  --text-sm:   0.875rem;
   --text-base: 1rem;
-  --text-lg:  1.125rem;
-  --text-xl:  1.25rem;
-  --text-2xl: 1.5rem;
-  --text-3xl: 1.875rem;
-  --text-4xl: 2.25rem;
+  --text-lg:   1.125rem;
+  --text-xl:   1.25rem;
+  --text-2xl:  1.5rem;
+  --text-3xl:  1.875rem;
+  --text-4xl:  2.25rem;
 
   /* Spacing */
-  --space-1: 0.25rem;
-  --space-2: 0.5rem;
-  --space-3: 0.75rem;
-  --space-4: 1rem;
-  --space-6: 1.5rem;
-  --space-8: 2rem;
+  --space-1:  0.25rem;
+  --space-2:  0.5rem;
+  --space-3:  0.75rem;
+  --space-4:  1rem;
+  --space-6:  1.5rem;
+  --space-8:  2rem;
   --space-12: 3rem;
   --space-16: 4rem;
   --space-24: 6rem;
@@ -59,19 +62,30 @@ html {
 }
 
 body {
-  background:            var(--color-bg);
-  color:                 var(--color-text);
-  font-family:           var(--font-body);
-  font-size:             var(--text-base);
-  line-height:           1.65;
+  background:             var(--color-bg);
+  color:                  var(--color-text);
+  font-family:            var(--font-body);
+  font-size:              var(--text-base);
+  line-height:            1.65;
   -webkit-font-smoothing: antialiased;
-  min-height:            100vh;
+  min-height:             100vh;
+  overflow-x:             hidden;
+}
+
+/* Film grain overlay */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.03;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
 }
 
 img, video, svg { display: block; max-width: 100%; }
-
 ul, ol { list-style: none; }
-
 a { color: inherit; }
 
 /* ─────────────────────────────────────
@@ -91,7 +105,7 @@ code, pre {
 }
 
 /* ─────────────────────────────────────
-   Prose (rendered Markdown content)
+   Prose (rendered Markdown)
    ───────────────────────────────────── */
 .prose h2 { font-size: var(--text-2xl); margin: var(--space-8) 0 var(--space-4); }
 .prose h3 { font-size: var(--text-xl);  margin: var(--space-6) 0 var(--space-3); }
@@ -101,9 +115,9 @@ code, pre {
   padding-left: var(--space-8);
   list-style: disc;
 }
-.prose ol { list-style: decimal; }
-.prose li { margin-bottom: var(--space-2); }
-.prose a  { text-decoration: underline; }
+.prose ol  { list-style: decimal; }
+.prose li  { margin-bottom: var(--space-2); }
+.prose a   { text-decoration: underline; }
 .prose code {
   background: var(--color-surface-alt);
   padding: 0.1em 0.35em;
@@ -125,7 +139,7 @@ code, pre {
 }
 
 /* ─────────────────────────────────────
-   Shared layout helpers
+   Layout helpers
    ───────────────────────────────────── */
 .container {
   max-width: var(--max-width);
@@ -141,9 +155,7 @@ code, pre {
 
 @media (max-width: 640px) {
   .container,
-  .container--narrow {
-    padding-inline: var(--space-6);
-  }
+  .container--narrow { padding-inline: var(--space-6); }
 }
 
 /* ─────────────────────────────────────

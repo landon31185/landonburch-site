@@ -12,197 +12,744 @@ function formatDate(d) {
 ---
 <BaseLayout title="Landon Burch" description="UX Designer and Systems Thinker">
 
-  <section class="hero">
-    <div class="container">
-      <p class="hero-label">UX Design · Systems Thinking · Objects</p>
-      <h1 class="hero-heading">Landon Burch</h1>
-      <p class="hero-sub">
-        I design the objects underneath the interface — the things that persist, relate,
-        and transform across a product's surface.
-      </p>
-      <div class="hero-actions">
-        <a href="/blog" class="btn">Read the writing</a>
-        <a href="/lab"  class="btn btn--ghost">See the lab</a>
+  <!-- ═══════════════════════════════════
+       STICKY HERO + BLOB ANIMATION
+       ═══════════════════════════════════ -->
+  <div id="sticky-wrapper">
+    <section id="hero">
+
+      <div id="blob-layer">
+        <div class="blob" id="b0" style="background:#C4622D;"></div>
+        <div class="blob" id="b1" style="background:#D4845A;"></div>
+        <div class="blob" id="b2" style="background:#B8A99A;"></div>
+        <div class="blob" id="b3" style="background:#C4622D;"></div>
+        <div class="blob" id="b4" style="background:#C46232;"></div>
+        <div class="blob" id="b5" style="background:#D4845A;"></div>
+      </div>
+
+      <div id="phone-outline">
+        <div id="phone-notch"></div>
+      </div>
+
+      <!-- Labels: no AppFolio references -->
+      <div class="blob-label" id="l0">Home<span>Navigation · Context</span></div>
+      <div class="blob-label" id="l1">The User<span>Role · Human</span></div>
+      <div class="blob-label" id="l2">Object State<span>Status · Lifecycle</span></div>
+      <div class="blob-label" id="l3">Open Questions<span>Logic · Criteria</span></div>
+      <div class="blob-label" id="l4">Create · Relate · Act<span>Actions</span></div>
+      <div class="blob-label" id="l5">Objects · Flows · Systems<span>Model · Navigation</span></div>
+
+      <div class="hero-text" id="heroText">
+        <div class="hero-wordmark">landon.</div>
+        <div class="hero-sub">Design × Systems × Objects</div>
+      </div>
+
+      <div id="promptBar">
+        <div class="prompt-inner">
+          <span class="prompt-arrow">›</span>
+          <span id="promptText"></span>
+          <span id="promptCursor"></span>
+        </div>
+      </div>
+
+      <div id="beat3">
+        AI will generate the UI.<br>Someone still has to design the objects.
+      </div>
+
+      <div class="scroll-hint" id="scrollHint">
+        <span>scroll</span>
+        <div class="scroll-line"></div>
+      </div>
+
+    </section>
+  </div>
+
+  <!-- ═══════════════════════════════════
+       PHILOSOPHY
+       ═══════════════════════════════════ -->
+  <div id="below">
+    <div class="section-wrap">
+      <div class="section-label">— Design Philosophy</div>
+      <div class="rel-grid">
+        <div class="rel-text">
+          <h2>Design is giving <em>form</em> to relationships.</h2>
+          <p>Most UX stops at screens. I work from objects — the things that persist, relate, and transform across a product's surface. The interface is a consequence of that thinking, not the starting point. As AI learns to generate UI, the objects underneath become the designer's most important work.</p>
+        </div>
+        <canvas id="relCanvas"></canvas>
       </div>
     </div>
-  </section>
+  </div>
 
-  <section class="recent-posts">
-    <div class="container">
-      <div class="section-header">
-        <span class="section-label">Recent writing</span>
-        <a href="/blog" class="see-all">All posts &rarr;</a>
-      </div>
-      <div class="posts-grid">
+  <!-- ═══════════════════════════════════
+       DYNAMIC BLOG STRIP
+       ═══════════════════════════════════ -->
+  <div class="blog-strip">
+    <div class="blog-inner">
+      <div class="section-label">— Writing</div>
+      <div class="posts">
         {posts.map(post => (
-          <a href={`/blog/${post.id}`} class="post-card">
-            <span class="post-date">{formatDate(post.data.date)}</span>
-            <h2 class="post-title">{post.data.title}</h2>
-            <p class="post-desc">{post.data.description}</p>
-            <div class="post-tags">
-              {post.data.tags.slice(0, 2).map(tag => (
-                <span class="tag">{tag}</span>
-              ))}
-            </div>
+          <a href={`/blog/${post.id}`} class="post">
+            <div class="post-date">{formatDate(post.data.date)}</div>
+            <div class="post-title">{post.data.title}</div>
+            <div class="post-tag">{post.data.tags.slice(0, 2).join(' · ')}</div>
           </a>
         ))}
       </div>
     </div>
-  </section>
+  </div>
 
 </BaseLayout>
 
 <style>
-  .hero {
-    padding: var(--space-24) 0 var(--space-16);
-    border-bottom: 1px solid var(--color-border);
+  /* ── STICKY WRAPPER ── */
+  #sticky-wrapper {
+    position: relative;
+    height: 500vh;
   }
 
-  .hero-label {
-    font-family: var(--font-mono);
-    font-size: var(--text-xs);
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--color-accent);
-    margin-bottom: var(--space-6);
+  #hero {
+    position: sticky;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    background: var(--color-bg);
   }
 
-  .hero-heading {
-    font-family: var(--font-heading);
-    font-size: clamp(2.5rem, 6vw, 4.5rem);
-    font-weight: 400;
-    letter-spacing: -0.02em;
-    line-height: 1.05;
-    margin-bottom: var(--space-6);
+  /* ── BLOBS ── */
+  #blob-layer {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .blob {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    outline: 1px solid transparent;
+  }
+
+  /* ── HERO TEXT ── */
+  .hero-text {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    pointer-events: none;
+    mix-blend-mode: multiply;
+    transition: opacity 0.3s ease;
+  }
+
+  .hero-wordmark {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(4.5rem, 13vw, 11rem);
+    font-weight: 700;
+    letter-spacing: -0.04em;
+    color: var(--color-text);
+    line-height: 0.88;
+    opacity: 0;
+    transform: translateY(24px);
+    animation: fadeUp 1.2s cubic-bezier(0.16,1,0.3,1) 0.3s forwards;
   }
 
   .hero-sub {
-    font-size: var(--text-lg);
-    color: var(--color-text-muted);
-    max-width: 540px;
-    line-height: 1.65;
-    margin-bottom: var(--space-8);
-  }
-
-  .hero-actions {
-    display: flex;
-    gap: var(--space-4);
-    flex-wrap: wrap;
-  }
-
-  .btn {
-    display: inline-block;
-    font-family: var(--font-mono);
-    font-size: var(--text-xs);
-    letter-spacing: 0.1em;
+    font-family: 'DM Mono', monospace;
+    font-size: clamp(0.6rem, 1.4vw, 0.82rem);
+    letter-spacing: 0.22em;
     text-transform: uppercase;
-    text-decoration: none;
-    padding: 0.65em 1.4em;
-    background: var(--color-text);
-    color: var(--color-bg);
-    border: 1px solid var(--color-text);
-    transition: background 0.15s, color 0.15s;
+    color: var(--color-accent);
+    margin-top: 1.4rem;
+    opacity: 0;
+    animation: fadeUp 1s cubic-bezier(0.16,1,0.3,1) 0.8s forwards;
   }
 
-  .btn:hover {
-    background: var(--color-accent);
-    border-color: var(--color-accent);
-  }
-
-  .btn--ghost {
-    background: transparent;
-    color: var(--color-text);
-  }
-
-  .btn--ghost:hover {
-    background: var(--color-text);
-    color: var(--color-bg);
-  }
-
-  /* Recent posts */
-  .recent-posts {
-    padding: var(--space-16) 0 var(--space-24);
-  }
-
-  .section-header {
+  /* ── SCROLL HINT ── */
+  .scroll-hint {
+    position: absolute;
+    bottom: 2.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.18em;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    z-index: 10;
+    opacity: 0;
+    animation: fadeUp 1s ease 1.6s forwards;
     display: flex;
-    justify-content: space-between;
-    align-items: baseline;
-    margin-bottom: var(--space-8);
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+  }
+
+  .scroll-hint.hidden { opacity: 0 !important; animation: none; }
+
+  .scroll-line {
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, var(--color-accent), transparent);
+    animation: scrollPulse 2s ease-in-out infinite;
+  }
+
+  /* ── PHONE OUTLINE ── */
+  #phone-outline {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    border: 1.5px solid rgba(196,98,45,0);
+    border-radius: 36px;
+    pointer-events: none;
+    z-index: 20;
+    transition: border-color 0.8s ease, box-shadow 0.8s ease;
+  }
+
+  #phone-outline.visible {
+    border-color: rgba(196,98,45,0.35);
+    box-shadow:
+      0 0 0 8px rgba(196,98,45,0.04),
+      inset 0 0 40px rgba(196,98,45,0.03),
+      0 32px 80px rgba(26,22,18,0.18),
+      0 8px 24px rgba(196,98,45,0.10);
+  }
+
+  #phone-notch {
+    position: absolute;
+    top: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 6px;
+    border-radius: 3px;
+    background: rgba(196,98,45,0);
+    transition: background 0.8s ease;
+  }
+
+  #phone-outline.visible #phone-notch {
+    background: rgba(196,98,45,0.25);
+  }
+
+  /* ── BLOB LABELS ── */
+  .blob-label {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(26,22,18,0.55);
+    white-space: nowrap;
+    pointer-events: none;
+    z-index: 2;
+    text-align: center;
+    line-height: 1.5;
+    user-select: none;
+    opacity: 0;
+  }
+
+  .blob-label span {
+    display: block;
+    font-size: 7px;
+    opacity: 0;
+    margin-top: 2px;
+  }
+
+  /* ── PROMPT BAR ── */
+  #promptBar {
+    position: absolute;
+    bottom: 8%;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 15;
+    pointer-events: none;
+    opacity: 0;
+    width: min(480px, 80vw);
+  }
+
+  .prompt-inner {
+    font-family: 'DM Mono', monospace;
+    font-size: clamp(0.68rem, 1.2vw, 0.82rem);
+    font-weight: 300;
+    color: var(--color-text);
+    letter-spacing: 0.02em;
+    padding: 0.9rem 1.4rem;
+    border: 1px solid rgba(196,98,45,0.25);
+    border-radius: 24px;
+    background: rgba(250,247,242,0.7);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .prompt-arrow { opacity: 0.3; font-size: 0.7rem; }
+
+  #promptCursor {
+    display: inline-block;
+    width: 1.5px;
+    height: 1.1em;
+    background: var(--color-accent);
+    opacity: 0;
+    animation: cursorBlink 1s step-end infinite;
+    vertical-align: middle;
+    margin-left: 1px;
+  }
+
+  /* ── BEAT 3 ── */
+  #beat3 {
+    position: absolute;
+    bottom: 2.5%;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 15;
+    text-align: center;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.8s ease;
+    white-space: nowrap;
+    font-family: 'DM Mono', monospace;
+    font-size: clamp(0.58rem, 1vw, 0.72rem);
+    font-weight: 300;
+    color: var(--color-accent);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    line-height: 2.2;
+  }
+
+  /* ── PHILOSOPHY ── */
+  #below {
+    background: var(--color-surface);
+    position: relative;
+    z-index: 10;
+  }
+
+  .section-wrap {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 6rem 3rem;
   }
 
   .section-label {
-    font-family: var(--font-mono);
-    font-size: var(--text-xs);
-    letter-spacing: 0.18em;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.25em;
     text-transform: uppercase;
-    color: var(--color-text-muted);
+    color: var(--color-accent);
+    margin-bottom: 3rem;
   }
 
-  .see-all {
-    font-family: var(--font-mono);
-    font-size: var(--text-xs);
-    letter-spacing: 0.08em;
-    text-decoration: none;
-    color: var(--color-text-muted);
-    transition: color 0.15s;
+  .rel-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6rem;
+    align-items: center;
   }
 
-  .see-all:hover { color: var(--color-text); }
+  .rel-text h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 3.5vw, 3rem);
+    font-weight: 400;
+    line-height: 1.18;
+    margin-bottom: 1.5rem;
+  }
 
-  .posts-grid {
+  .rel-text h2 em {
+    font-style: italic;
+    color: var(--color-accent);
+  }
+
+  .rel-text p {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--color-text-muted);
+    line-height: 1.9;
+    font-weight: 300;
+    max-width: 380px;
+  }
+
+  #relCanvas {
+    width: 100%;
+    height: 300px;
+    display: block;
+  }
+
+  /* ── BLOG STRIP ── */
+  .blog-strip {
+    background: var(--color-ink-bg);
+    padding: 5rem 3rem;
+  }
+
+  .blog-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .blog-strip .section-label { color: var(--color-accent-light); }
+
+  .posts {
     display: grid;
     grid-template-columns: 2fr 1fr 1fr;
-    gap: 1px;
-    background: var(--color-border);
-    border: 1px solid var(--color-border);
+    gap: 1.5px;
+    background: #2a2420;
+    border: 1.5px solid #2a2420;
+    margin-top: 2rem;
   }
 
-  .post-card {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-3);
-    padding: var(--space-8) var(--space-6);
-    background: var(--color-bg);
+  .post {
+    background: var(--color-ink-bg);
+    padding: 2.5rem 2rem;
+    transition: background 0.3s;
     text-decoration: none;
-    transition: background 0.15s;
+    display: block;
   }
 
-  .post-card:hover { background: var(--color-surface); }
+  .post:hover { background: #221e1a; }
 
   .post-date {
-    font-family: var(--font-mono);
-    font-size: var(--text-xs);
-    letter-spacing: 0.1em;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
     color: var(--color-text-muted);
+    margin-bottom: 1rem;
+    opacity: 0.55;
   }
 
   .post-title {
-    font-family: var(--font-heading);
-    font-size: var(--text-xl);
-    font-weight: 400;
-    line-height: 1.25;
-    color: var(--color-text);
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem;
+    color: var(--color-bg);
+    line-height: 1.3;
+    margin-bottom: 0.8rem;
   }
 
-  .post-card:first-child .post-title { font-size: var(--text-2xl); }
+  .post:first-child .post-title { font-size: 1.65rem; }
 
-  .post-desc {
-    font-size: var(--text-sm);
-    color: var(--color-text-muted);
-    line-height: 1.6;
-    flex: 1;
+  .post-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.58rem;
+    letter-spacing: 0.15em;
+    color: var(--color-accent);
+    text-transform: uppercase;
   }
 
-  .post-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2);
-    margin-top: auto;
+  /* ── KEYFRAMES ── */
+  @keyframes fadeUp {
+    to { opacity: 1; transform: translateY(0); }
   }
 
+  @keyframes scrollPulse {
+    0%, 100% { opacity: 0.35; }
+    50%       { opacity: 1; }
+  }
+
+  @keyframes cursorBlink {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0; }
+  }
+
+  /* ── RESPONSIVE ── */
   @media (max-width: 768px) {
-    .posts-grid { grid-template-columns: 1fr; }
-    .post-desc  { display: none; }
+    .rel-grid   { grid-template-columns: 1fr; gap: 3rem; }
+    .posts      { grid-template-columns: 1fr; }
+    .section-wrap { padding: 4rem 1.5rem; }
+    .blog-strip   { padding: 4rem 1.5rem; }
   }
 </style>
+
+<script>
+// ─────────────────────────────────────
+// PHONE WIREFRAME TARGET LAYOUT
+// ─────────────────────────────────────
+const PHONE_W = 260;
+const PHONE_H = 540;
+
+const blobDefs = [
+  {
+    free: { x: 60, y: 32, w: 240, h: 240, op: 0.60 },
+    wire: { ox: 0, oy: -203, w: 212, h: 34, rx: 10, op: 0.60 },
+    label: 'l0'
+  },
+  {
+    free: { x: 25, y: 55, w: 180, h: 180, op: 0.55 },
+    wire: { ox: -50, oy: -158, w: 100, h: 28, rx: 14, op: 0.65 },
+    label: 'l1'
+  },
+  {
+    free: { x: 38, y: 42, w: 300, h: 300, op: 0.72 },
+    wire: { ox: 0, oy: -90, w: 212, h: 80, rx: 14, op: 0.80 },
+    label: 'l2'
+  },
+  {
+    free: { x: 70, y: 62, w: 200, h: 200, op: 0.58 },
+    wire: { ox: 0, oy: -6, w: 212, h: 60, rx: 12, op: 0.58 },
+    label: 'l3'
+  },
+  {
+    free: { x: 45, y: 74, w: 160, h: 160, op: 0.50 },
+    wire: { ox: 0, oy: 56, w: 212, h: 36, rx: 18, op: 0.82 },
+    label: 'l4'
+  },
+  {
+    free: { x: 20, y: 28, w: 190, h: 190, op: 0.52 },
+    wire: { ox: 0, oy: 106, w: 212, h: 36, rx: 10, op: 0.55 },
+    label: 'l5'
+  },
+];
+
+// ─── ENGINE ───
+const blobs        = blobDefs.map((_, i) => document.getElementById('b' + i));
+const labels       = blobDefs.map((_, i) => document.getElementById('l' + i));
+const heroText     = document.getElementById('heroText');
+const scrollHint   = document.getElementById('scrollHint');
+const phoneOutline = document.getElementById('phone-outline');
+const wrapper      = document.getElementById('sticky-wrapper');
+
+const drifts = blobDefs.map(() => ({
+  ax: Math.random() * Math.PI * 2,
+  ay: Math.random() * Math.PI * 2,
+  sx: 0.007 + Math.random() * 0.005,
+  sy: 0.006 + Math.random() * 0.005,
+  mx: 3 + Math.random() * 5,
+  my: 2.5 + Math.random() * 4,
+}));
+
+let frame = 0;
+
+function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
+function ease(t)         { return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2,3)/2; }
+function lerpN(a, b, t)  { return a + (b - a) * t; }
+
+function positionPhone() {
+  phoneOutline.style.width  = PHONE_W + 'px';
+  phoneOutline.style.height = PHONE_H + 'px';
+}
+positionPhone();
+window.addEventListener('resize', positionPhone);
+
+function wireToViewport(wire) {
+  const cx = window.innerWidth / 2, cy = window.innerHeight / 2;
+  const vw = window.innerWidth,     vh = window.innerHeight;
+  return {
+    x:  ((cx + wire.ox) / vw) * 100,
+    y:  ((cy + wire.oy) / vh) * 100,
+    w: wire.w, h: wire.h, rx: wire.rx, op: wire.op,
+  };
+}
+
+function setBlob(el, x, y, w, h, rx, op, shadow) {
+  el.style.left         = x + '%';
+  el.style.top          = y + '%';
+  el.style.width        = w + 'px';
+  el.style.height       = h + 'px';
+  el.style.borderRadius = rx + 'px';
+  el.style.opacity      = op;
+  if (shadow !== undefined) el.style.boxShadow = shadow;
+}
+
+function setLabel(el, x, y, w) {
+  el.style.left  = x + '%';
+  el.style.top   = y + '%';
+  el.style.width = w + 'px';
+}
+
+const P1 = 0.30, P2 = 0.70, P3 = 0.85;
+
+function tick() {
+  frame++;
+  const totalScroll = wrapper.offsetHeight - window.innerHeight;
+  const scrolled    = clamp(-wrapper.getBoundingClientRect().top, 0, totalScroll);
+  const progress    = clamp(scrolled / totalScroll, 0, 1);
+
+  // Scroll hint
+  if (progress > 0.04) scrollHint.classList.add('hidden');
+  else scrollHint.classList.remove('hidden');
+
+  // Hero text fade
+  heroText.style.opacity = clamp(1 - (progress - 0.12) / 0.13, 0, 1);
+
+  // Prompt bar typewriter
+  const promptBar    = document.getElementById('promptBar');
+  const promptText   = document.getElementById('promptText');
+  const promptCursor = document.getElementById('promptCursor');
+  const PROMPT       = "Map the objects before you design the UI";
+
+  if (promptBar) {
+    const barOp = ease(clamp((progress - 0.18) / 0.08, 0, 1));
+    promptBar.style.opacity = barOp.toFixed(3);
+    const typeP = clamp((progress - 0.22) / 0.30, 0, 1);
+    promptText.textContent  = PROMPT.slice(0, Math.floor(typeP * PROMPT.length));
+    promptCursor.style.opacity   = barOp > 0.5 ? '' : '0';
+    if (typeP >= 1) {
+      promptCursor.style.animation = 'none';
+      promptCursor.style.opacity   = '0';
+    } else {
+      promptCursor.style.animation = '';
+    }
+  }
+
+  // Beat 3
+  const beat3El = document.getElementById('beat3');
+  if (beat3El) beat3El.style.opacity = ease(clamp((progress - P3 - 0.05) / 0.12, 0, 1));
+
+  // Phone outline
+  if (progress > P3) phoneOutline.classList.add('visible');
+  else phoneOutline.classList.remove('visible');
+
+  // Labels
+  labels.forEach((l, i) => {
+    const stagger = i * 0.03;
+    const sub = l.querySelector('span');
+
+    if (progress > 0.45) {
+      const ghostP = clamp((progress - 0.45 - stagger) / 0.15, 0, 1);
+      let labelOp = ghostP * 0.15;
+
+      if (progress > P2) {
+        labelOp = lerpN(0.15, 0.4, ease(clamp((progress - P2) / (P3 - P2), 0, 1)));
+      }
+      if (progress > P3) {
+        const fullP = ease(clamp((progress - P3 - stagger) / 0.12, 0, 1));
+        labelOp = lerpN(0.4, 1.0, fullP);
+        if (sub) sub.style.opacity = (fullP * 0.6).toFixed(2);
+      } else {
+        if (sub) sub.style.opacity = '0';
+      }
+      l.style.opacity = labelOp.toFixed(3);
+    } else {
+      l.style.opacity = '0';
+      if (sub) sub.style.opacity = '0';
+    }
+  });
+
+  // Blobs
+  blobDefs.forEach((def, i) => {
+    const el    = blobs[i];
+    const label = labels[i];
+    const d     = drifts[i];
+    const free  = def.free;
+    const wire  = wireToViewport(def.wire);
+
+    const dx = Math.sin(frame * d.sx + d.ax) * d.mx;
+    const dy = Math.cos(frame * d.sy + d.ay) * d.my;
+
+    const sp       = ease(clamp((progress - P2) / (P3 - P2), 0, 1));
+    const isCard   = wire.h > 50;
+    const shadowStr = isCard
+      ? `0 ${4 + sp*12}px ${8 + sp*32}px rgba(26,22,18,${(sp*0.13).toFixed(2)}), 0 ${sp*3}px ${sp*10}px rgba(196,98,45,${(sp*0.07).toFixed(2)})`
+      : `0 ${2 + sp*6}px ${4 + sp*14}px rgba(26,22,18,${(sp*0.09).toFixed(2)})`;
+
+    if (progress <= P1) {
+      setBlob(el, free.x + dx, free.y + dy, free.w, free.w, free.w / 2, free.op, 'none');
+      setLabel(label, free.x + dx, free.y + dy, free.w);
+    } else if (progress <= P2) {
+      const p         = ease((progress - P1) / (P2 - P1));
+      const driftFade = 1 - p;
+      setBlob(el,
+        lerpN(free.x, wire.x, p) + dx * driftFade,
+        lerpN(free.y, wire.y, p) + dy * driftFade,
+        lerpN(free.w, wire.w, p),
+        lerpN(free.w, wire.h, p),
+        lerpN(free.w / 2, wire.rx, p),
+        lerpN(free.op, wire.op, p),
+        'none'
+      );
+      setLabel(label, lerpN(free.x, wire.x, p) + dx * driftFade, lerpN(free.y, wire.y, p) + dy * driftFade, lerpN(free.w, wire.w, p));
+    } else {
+      const micro = Math.sin(frame * 0.02 + i) * (1 - ease(clamp((progress - P2) / (P3 - P2), 0, 1))) * 2;
+      setBlob(el, wire.x, wire.y + micro * 0.1, wire.w, wire.h, wire.rx, wire.op, shadowStr);
+      setLabel(label, wire.x, wire.y, wire.w);
+    }
+  });
+
+  requestAnimationFrame(tick);
+}
+
+requestAnimationFrame(tick);
+
+// ─── RELATIONSHIP GRAPH ───
+const rc   = document.getElementById('relCanvas');
+const rctx = rc.getContext('2d');
+
+function resizeRel() {
+  rc.width  = rc.offsetWidth;
+  rc.height = rc.offsetHeight || 300;
+}
+
+const rnodes = [
+  { label: 'Applicant',    x: 0.50, y: 0.18, r: 26 },
+  { label: 'Application',  x: 0.50, y: 0.50, r: 20 },
+  { label: 'Criteria',     x: 0.18, y: 0.72, r: 17 },
+  { label: 'Risk Score',   x: 0.82, y: 0.72, r: 17 },
+  { label: 'Co-applicant', x: 0.15, y: 0.32, r: 14 },
+  { label: 'Unit',         x: 0.85, y: 0.32, r: 14 },
+];
+
+const edges = [[0,1],[1,2],[1,3],[0,4],[1,5],[2,3],[0,5]];
+let relF = 0;
+
+function drawRel() {
+  const W = rc.width, H = rc.height;
+  rctx.clearRect(0, 0, W, H);
+  relF++;
+  const t = relF * 0.012;
+
+  const pos = rnodes.map((n, i) => ({
+    x: n.x * W + Math.sin(t + i * 1.3) * 7,
+    y: n.y * H + Math.cos(t * 0.85 + i) * 5,
+    r: n.r, label: n.label
+  }));
+
+  for (const [a, b] of edges) {
+    const pa = pos[a], pb = pos[b];
+    const g  = rctx.createLinearGradient(pa.x, pa.y, pb.x, pb.y);
+    g.addColorStop(0, 'rgba(196,98,45,0.25)');
+    g.addColorStop(1, 'rgba(184,169,154,0.08)');
+    rctx.beginPath();
+    rctx.moveTo(pa.x, pa.y);
+    rctx.lineTo(pb.x, pb.y);
+    rctx.strokeStyle = g;
+    rctx.lineWidth   = 1;
+    rctx.stroke();
+  }
+
+  for (const p of pos) {
+    rctx.beginPath();
+    rctx.arc(p.x, p.y, p.r + 5, 0, Math.PI * 2);
+    rctx.strokeStyle = 'rgba(196,98,45,0.1)';
+    rctx.lineWidth   = 1;
+    rctx.stroke();
+
+    rctx.beginPath();
+    rctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    rctx.fillStyle   = '#FAF7F2';
+    rctx.fill();
+    rctx.strokeStyle = 'rgba(196,98,45,0.35)';
+    rctx.lineWidth   = 1.5;
+    rctx.stroke();
+
+    rctx.fillStyle    = '#1A1612';
+    rctx.font         = "300 8.5px 'DM Mono', monospace";
+    rctx.textAlign    = 'center';
+    rctx.textBaseline = 'middle';
+    rctx.fillText(p.label, p.x, p.y);
+  }
+
+  requestAnimationFrame(drawRel);
+}
+
+window.addEventListener('resize', resizeRel);
+resizeRel();
+drawRel();
+</script>
